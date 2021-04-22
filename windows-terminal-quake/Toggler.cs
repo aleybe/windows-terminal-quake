@@ -55,7 +55,25 @@ namespace WindowsTerminalQuake
 			// Hide on focus lost
 			FocusTracker.OnFocusLost += (s, a) =>
 			{
-				if (Settings.Instance.HideOnFocusLost && isOpen)
+				bool hide = false;
+				
+				if (!Settings.Instance.HideOnOtherMonitorFocusLost) // if this is false
+				{
+					// Get the current cursor screen
+					var cursorScreen = GetScreenWithCursor();
+					var terminalScreen = GetScreenWithTerminal(_process);
+
+					if (cursorScreen != terminalScreen)
+					{
+						hide = false;
+					}
+					else
+					{
+						hide = true;
+					}
+				}
+				
+				if (Settings.Instance.HideOnFocusLost && isOpen && hide)
 				{
 					isOpen = false;
 					Toggle(false, 0);
@@ -215,6 +233,28 @@ namespace WindowsTerminalQuake
 						?? Screen.PrimaryScreen
 					;
 			}
+		}
+		
+		private static Screen GetScreenWithTerminal(Process process)
+		{
+			var settings = Settings.Instance;
+			if (settings == null) return Screen.PrimaryScreen; // Should not happen
+
+			User32.Rect posRect;
+			User32.GetWindowRect(process.MainWindowHandle, out posRect);
+			
+			// Create a point with the top left
+			// Check if they are "off screen" -> happens with full screen
+			var point = new Point
+			{
+				X = posRect.Left < 0 ? 0 : posRect.Left,
+				Y = posRect.Top < 0 ? 0 : posRect.Top
+			};
+			
+			return Screen.AllScreens
+				       .FirstOrDefault(s => s.Bounds.Contains(point))
+			       ?? Screen.PrimaryScreen
+				;
 		}
 
 		private static void ResetTerminal(Process process)

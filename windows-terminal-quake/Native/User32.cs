@@ -25,7 +25,7 @@ namespace WindowsTerminalQuake.Native
 		public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
 		[DllImport("user32.dll")]
-		public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
+		public static extern bool GetWindowRect(IntPtr hwnd, out Rect rectangle);
 
 		[DllImport("user32.dll")]
 		public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);

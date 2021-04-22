@@ -46,6 +46,9 @@
 
 	// Whether to keep the terminal window always on top (requires restart).
 	"AlwaysOnTop": false,
+  
+  	// Whether to hide on focus lost on another monitor other than current. (Defaults to true)
+  	"HideOnOtherMonitorFocusLost": false,
 
 	// Whether to hide the terminal window immediately after app start.
 	"StartHidden": false,
